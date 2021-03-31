@@ -12,7 +12,9 @@ namespace Portfolio.Domain.Dtos
 
         public string LastName { get; set; }
 
-        public string Content { get; set; }
+        public string Email { get; set; }
+
+        public string MessageContent { get; set; }
 
         public MessageStatus MessageStatus { get; set; }
 

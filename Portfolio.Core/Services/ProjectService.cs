@@ -46,6 +46,9 @@ namespace Portfolio.Core.Services
         public async Task<Project> UpdateSkills(int projectId, IEnumerable<Skill> skills)
         {
             var project = _projectRepository.Table.Include(x => x.Skills).FirstOrDefault(x => x.Id == projectId);
+            if (project == null)
+                return null;
+
 
             var skillIds = skills.Select(x => x.Id);
 

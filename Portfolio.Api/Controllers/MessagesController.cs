@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Portfolio.Core.Interfaces;
 using Portfolio.Core.Interfaces.Common;
 using Portfolio.Domain.Dtos;
+using Portfolio.Domain.Dtos.Messages;
 using Portfolio.Domain.Enums;
 using Portfolio.Domain.Models;
 
@@ -64,13 +65,13 @@ namespace Portfolio.Controllers
         }
 
         [HttpPut]
-        public async Task<MessageDto> UpdateMessageStatus(int messageId, MessageStatus status)
+        public async Task<MessageDto> UpdateMessageStatus(UpdateMessageStatusDto model)
         {
-            var message = await _messageService.GetById(messageId);
+            var message = await _messageService.GetById(model.Id);
             if (message == null)
                 throw new Exception("Message not found");
 
-            await _messageService.UpdateMessageStatus(message, status);
+            await _messageService.UpdateMessageStatus(message, model.MessageStatus);
             return _mapper.Map<MessageDto>(message);
         }
 
@@ -84,6 +85,9 @@ namespace Portfolio.Controllers
             await _messageService.Delete(message);
             return Ok();
         }
+
+        
+
         #endregion
     }
 }

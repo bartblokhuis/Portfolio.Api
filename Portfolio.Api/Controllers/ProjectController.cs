@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -42,6 +43,7 @@ namespace Portfolio.Controllers
         {
             var projects = await _projectService.Get();
 
+            //Prevent infinit loop issues with the json serializer.
             foreach (var skill in projects.SelectMany(x => x.Skills))
             {
                 skill.Projects = null;
@@ -78,6 +80,9 @@ namespace Portfolio.Controllers
         {
             var skills = await _skillService.GetSkillsByIds(model.SkillIds);
             var project = await _projectService.UpdateSkills(model.ProjectId, skills);
+
+            if (project == null)
+                throw new Exception("Project not found");
 
             foreach (var skill in project.Skills)
             {

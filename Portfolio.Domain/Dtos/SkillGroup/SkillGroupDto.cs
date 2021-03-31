@@ -1,24 +1,20 @@
 ﻿using Portfolio.Domain.Dtos.Common;
+using Portfolio.Domain.Models;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Portfolio.Domain.Dtos
 {
-    public class SkillDto : BaseDto
+    public class SkillGroupDto : BaseDto
     {
         #region Properties
 
         [Required(AllowEmptyStrings = false)]
-        public string Name { get; set; }
+        public string Title { get; set; }
 
-        public string IconPath { get; set; }
-
-        [Required]
         public int DisplayNumber { get; set; }
 
-        [Required]
-        public int SkillGroupId { get; set; }
-
-        public SkillGroupDto SkillGroup { get; set; }
+        public IEnumerable<Skill> Skills { get; set; }
 
         #endregion
     }

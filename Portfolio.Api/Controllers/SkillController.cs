@@ -68,7 +68,7 @@ namespace Portfolio.Controllers
             return _mapper.Map<SkillDto>(skill);
         }
 
-        [HttpPut("SaveSkillImage")]
+        [HttpPut("SaveSkillImage/{skillId}")]
         public async Task<SkillDto> SaveSkillImage(int skillId, IFormFile icon)
         {
             var skill = await _skillService.GetById(skillId);
@@ -99,6 +99,8 @@ namespace Portfolio.Controllers
 
             if (await _skillService.IsExistingSkill(model.Name, model.SkillGroupId, skill))
                 throw new Exception("Skill with the same name already exists");
+
+            model.IconPath = skill.IconPath;
 
             _mapper.Map(model, skill);
             await _skillService.Update(skill);

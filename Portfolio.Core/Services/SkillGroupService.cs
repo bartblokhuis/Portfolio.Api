@@ -33,7 +33,7 @@ namespace Portfolio.Core.Services
 
         public async Task<IEnumerable<SkillGroup>> GetAll()
         {
-            var skillGroups = await _skillGroupRepository.GetAsync(orderBy: (s) => s.OrderBy(x => x.DisplayNumber));
+            var skillGroups = await _skillGroupRepository.GetAsync(orderBy: (s) => s.OrderBy(x => x.DisplayNumber), includeProperties: "Skills");
             return skillGroups;
         }
 

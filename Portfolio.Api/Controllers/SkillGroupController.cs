@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Portfolio.Core.Interfaces;
 using Portfolio.Domain.Dtos;
+using Portfolio.Domain.Dtos.SkillGroup;
 using Portfolio.Domain.Models;
 
 namespace Portfolio.Controllers
@@ -38,12 +40,16 @@ namespace Portfolio.Controllers
         [HttpGet]
         public async Task<IEnumerable<SkillGroupDto>> Get()
         {
-            var skills = await _skillGroupService.GetAll();
-            return _mapper.Map<IEnumerable<SkillGroupDto>>(skills);
+            var skillGroups = await _skillGroupService.GetAll();
+            foreach (var skill in skillGroups.SelectMany(x => x.Skills))
+            {
+                skill.SkillGroup = null;
+            }
+            return _mapper.Map<IEnumerable<SkillGroupDto>>(skillGroups);
         }
  
         [HttpPost]
-        public async Task<SkillGroupDto> Create(SkillGroupDto model)
+        public async Task<SkillGroupDto> Create(CreateUpdateSkillGroupDto model)
         {
             if (!ModelState.IsValid)
                 throw new Exception("Invalid model");
@@ -58,7 +64,7 @@ namespace Portfolio.Controllers
         }
 
         [HttpPut]
-        public async Task<SkillGroupDto> Update(SkillGroupDto model)
+        public async Task<SkillGroupDto> Update(CreateUpdateSkillGroupDto model)
         {
             if (!ModelState.IsValid)
                 throw new Exception("Invalid model");

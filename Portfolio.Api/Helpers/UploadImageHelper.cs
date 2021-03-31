@@ -43,16 +43,19 @@ namespace Portfolio.Helpers
         {
             var imageName = Path.GetFileNameWithoutExtension(image.FileName);
             var fileExtension = Path.GetExtension(image.FileName);
-            var uniqueFileName = imageName + "_" + Convert.ToBase64String(Guid.NewGuid().ToByteArray()) + fileExtension;
+            var uniqueFileName = Path.GetRandomFileName() + fileExtension;
 
-            var uploadPath = Path.Combine(_hostingEnvironment.ContentRootPath, "uploads");
+            uniqueFileName = uniqueFileName.Replace("\\", "");
+
+            var path = "uploads/" + uniqueFileName;
+            var uploadPath = Path.Combine(_hostingEnvironment.ContentRootPath, "wwwroot\\uploads");
 
             var filePath = Path.Combine(uploadPath, uniqueFileName);
 
             using Stream fileStream = new FileStream(filePath, FileMode.Create);
 
             await image.CopyToAsync(fileStream);
-            return filePath;
+            return path;
         }
 
         #region Utils
