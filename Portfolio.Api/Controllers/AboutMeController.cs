@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Portfolio.Core.Interfaces;
@@ -40,6 +41,7 @@ namespace Portfolio.Controllers
             return _mapper.Map<AboutMeDto>(aboutMe);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<AboutMeDto> Save(AboutMeDto model)
         {

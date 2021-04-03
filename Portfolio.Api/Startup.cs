@@ -1,12 +1,15 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Portfolio.Core.AutoMapper;
 using Portfolio.Core.Configuration;
@@ -15,8 +18,10 @@ using Portfolio.Core.Interfaces.Common;
 using Portfolio.Core.Services;
 using Portfolio.Core.Services.Common;
 using Portfolio.Database;
+using Portfolio.Domain.Models.Authentication;
 using Portfolio.Helpers;
 using System.IO;
+using System.Text;
 
 namespace Portfolio
 {
@@ -49,6 +54,7 @@ namespace Portfolio
                 options.UseSqlServer(config);
             });
 
+            AddAuthentication(services);
             services.AddAutoMapper(typeof(PortfolioMappings));
 
             services.AddScoped<IMessageService, MessageService>();
@@ -68,6 +74,39 @@ namespace Portfolio
 
             services.AddCors((options =>
             { options.AddPolicy("AllowAllOrigins", builder => builder.AllowAnyOrigin()); }));
+        }
+
+        private void AddAuthentication(IServiceCollection services)
+        {
+            services.AddDbContext<AuthenticationDbContext>
+                (options => options.UseSqlServer(Configuration["ConnectionString:DefaultConnection"]));
+
+            // For Identity  
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<AuthenticationDbContext>()
+                .AddDefaultTokenProviders();
+
+            // Adding Authentication  
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            // Adding Jwt Bearer  
+            .AddJwtBearer(options =>
+             {
+                 options.SaveToken = true;
+                 options.RequireHttpsMetadata = false;
+                 options.TokenValidationParameters = new TokenValidationParameters()
+                 {
+                     ValidateIssuer = true,
+                     ValidateAudience = true,
+                     ValidAudience = Configuration["JWT:ValidAudience"],
+                     ValidIssuer = Configuration["JWT:ValidIssuer"],
+                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+                 };
+             });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -98,6 +137,7 @@ namespace Portfolio
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseCors(x => x
