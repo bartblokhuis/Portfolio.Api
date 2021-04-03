@@ -12,7 +12,7 @@ namespace Portfolio.Database
     {
         #region Constructor
 
-        public PortfolioContext(DbContextOptions options)
+        public PortfolioContext(DbContextOptions<PortfolioContext> options)
             : base(options)
         {
         }
