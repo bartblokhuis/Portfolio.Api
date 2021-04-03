@@ -48,6 +48,13 @@ namespace Portfolio.Controllers
             return _mapper.Map<IEnumerable<SkillDto>>(skills);
         }
 
+        [HttpGet("GetBySkillGroupId/{skillGroupId}")]
+        public async Task<IEnumerable<SkillDto>> GetBySkillGroupId(int skillGroupId)
+        {
+            var skills = await _skillService.GetBySkillGroupId(skillGroupId);
+            return _mapper.Map<IEnumerable<SkillDto>>(skills);
+        }
+
         [HttpPost]
         public async Task<SkillDto> Create(CreateUpdateSkill model)
         {

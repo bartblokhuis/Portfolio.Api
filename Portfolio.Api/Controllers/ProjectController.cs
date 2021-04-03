@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Portfolio.Core.Interfaces;
 using Portfolio.Domain.Dtos.Projects;
 using Portfolio.Domain.Models;
+using Portfolio.Helpers;
 
 namespace Portfolio.Controllers
 {
@@ -20,18 +22,20 @@ namespace Portfolio.Controllers
         private readonly ILogger<ProjectController> _logger;
         private readonly IProjectService _projectService;
         private readonly ISkillService _skillService;
-        private readonly IMapper _mapper; 
+        private readonly IMapper _mapper;
+        private readonly IUploadImageHelper _uploadImageHelper;
 
         #endregion
 
         #region Constructor
 
-        public ProjectController(ILogger<ProjectController> logger, IProjectService projectService, IMapper mapper, ISkillService skillService)
+        public ProjectController(ILogger<ProjectController> logger, IProjectService projectService, IMapper mapper, ISkillService skillService, IUploadImageHelper uploadImageHelper)
         {
             _logger = logger;
             _projectService = projectService;
             _mapper = mapper;
             _skillService = skillService;
+            _uploadImageHelper = uploadImageHelper;
         }
 
         #endregion
@@ -67,10 +71,10 @@ namespace Portfolio.Controllers
             var project = _mapper.Map<Project>(model);
             project = await _projectService.Update(project);
 
-            foreach (var skill in project.Skills)
-            {
-                skill.Projects = null;
-            }
+            if(project.Skills != null)
+                foreach (var skill in project.Skills)
+                    skill.Projects = null;
+            
 
             return _mapper.Map<ProjectDto>(project);
         }
@@ -89,6 +93,22 @@ namespace Portfolio.Controllers
                 skill.Projects = null;
             }
 
+            return _mapper.Map<ProjectDto>(project);
+        }
+
+        [HttpPut("UpdateDemoImage/{projectId}")]
+        public async Task<ProjectDto> SaveSkillImage(int projectId, IFormFile icon)
+        {
+            var project = await _projectService.GetById(projectId);
+            if (project == null)
+                throw new Exception("No skill found with the provided id");
+
+            var errorMessage = _uploadImageHelper.ValidateImage(icon);
+            if (!string.IsNullOrEmpty(errorMessage))
+                throw new Exception(errorMessage);
+
+            project.ImagePath = await _uploadImageHelper.UploadImage(icon);
+            project = await _projectService.Update(project);
             return _mapper.Map<ProjectDto>(project);
         }
 

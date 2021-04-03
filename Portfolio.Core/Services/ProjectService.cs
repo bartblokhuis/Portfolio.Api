@@ -32,6 +32,11 @@ namespace Portfolio.Core.Services
             return _projectRepository.Table.AsQueryable().AsNoTracking().Include(x => x.Skills).ToListAsync();
         }
 
+        public Task<Project> GetById(int id)
+        {
+            return _projectRepository.GetByIdAsync(id);
+        }
+
         public Task Create(Project model)
         {
             return _projectRepository.InsertAsync(model);

@@ -13,13 +13,10 @@ namespace Portfolio.Core.AutoMapper
             CreateMap<AboutMe, AboutMeDto>();
             CreateMap<AboutMeDto, AboutMe>().ForMember(x => x.Id, options => options.Ignore());
 
-            CreateMap<Message, MessageDto>();
-            CreateMap<MessageDto, Message>();
+            CreateMap<Message, MessageDto>().ReverseMap();
 
-            CreateMap<Project, ProjectDto>();
-            CreateMap<ProjectDto, Project>();
-
-            CreateMap<CreateUpdateProject, ProjectDto>();
+            CreateMap<Project, ProjectDto>().ReverseMap();
+            CreateMap<CreateUpdateProject, Project>();
 
             CreateMap<CreateUpdateSkill, Skill>();
             CreateMap<Skill, SkillDto>();

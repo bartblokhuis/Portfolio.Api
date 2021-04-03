@@ -8,6 +8,8 @@ namespace Portfolio.Core.Interfaces
     {
         Task<List<Project>> Get();
 
+        Task<Project> GetById(int id);
+
         Task Create(Project model);
 
         Task<Project> Update(Project model);

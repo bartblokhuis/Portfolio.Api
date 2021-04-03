@@ -45,6 +45,11 @@ namespace Portfolio.Core.Services
             return _skillRepository.GetAsync(orderBy: (s) => s.OrderBy(skill => skill.SkillGroupId).ThenBy(skill => skill.DisplayNumber));
         }
 
+        public Task<IEnumerable<Skill>> GetBySkillGroupId(int skillGroupId)
+        {
+            return _skillRepository.GetAsync(filter: (s) => s.SkillGroupId == skillGroupId, orderBy: (s) => s.OrderBy(skill => skill.DisplayNumber));
+        }
+
         public Task Insert(Skill skillDto)
         {
             return _skillRepository.InsertAsync(skillDto);

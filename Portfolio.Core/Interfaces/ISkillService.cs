@@ -9,6 +9,8 @@ namespace Portfolio.Core.Interfaces
     {
         Task<IEnumerable<Skill>> GetAll();
 
+        Task<IEnumerable<Skill>> GetBySkillGroupId(int skillGroupId);
+
         Task Insert(Skill skillDto);
 
         Task Update(Skill skillDto);
