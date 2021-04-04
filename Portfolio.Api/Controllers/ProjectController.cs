@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,6 +14,7 @@ using Portfolio.Helpers;
 
 namespace Portfolio.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class ProjectController : ControllerBase
@@ -42,6 +44,7 @@ namespace Portfolio.Controllers
 
         #region Methods
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IEnumerable<ProjectDto>> Get()
         {

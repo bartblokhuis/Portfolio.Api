@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Portfolio.Core.Interfaces;
@@ -13,6 +14,7 @@ using Portfolio.Domain.Models;
 
 namespace Portfolio.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class MessagesController : ControllerBase
@@ -47,6 +49,7 @@ namespace Portfolio.Controllers
             return _mapper.Map<IEnumerable<MessageDto>>(messages);
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<MessageDto> Create(MessageDto messageDto)
         {

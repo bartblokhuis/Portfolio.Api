@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,7 @@ using Portfolio.Helpers;
 
 namespace Portfolio.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class SkillController : ControllerBase
@@ -41,6 +43,7 @@ namespace Portfolio.Controllers
 
         #region Methods
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IEnumerable<SkillDto>> Get()
         {
@@ -48,6 +51,7 @@ namespace Portfolio.Controllers
             return _mapper.Map<IEnumerable<SkillDto>>(skills);
         }
 
+        [AllowAnonymous]
         [HttpGet("GetBySkillGroupId/{skillGroupId}")]
         public async Task<IEnumerable<SkillDto>> GetBySkillGroupId(int skillGroupId)
         {
