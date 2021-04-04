@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -39,62 +40,57 @@ namespace Portfolio.Controllers
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await userManager.FindByNameAsync(model.Username);
-            if (user != null && await userManager.CheckPasswordAsync(user, model.Password))
-            {
-                var userRoles = await userManager.GetRolesAsync(user);
+            if(user == null || !await userManager.CheckPasswordAsync(user, model.Password))
+                return Unauthorized();
 
-                var authClaims = new List<Claim>
+            var userRoles = await userManager.GetRolesAsync(user);
+
+            var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 
-                foreach (var userRole in userRoles)
-                {
-                    authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-                }
+            foreach (var userRole in userRoles)
+                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+            
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 
-                var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+            var loginTime = model.RememberMe ? DateTime.Now.AddDays(7) : DateTime.Now.AddHours(8);
 
-                var loginTime = model.RememberMe ? DateTime.Now.AddDays(7) : DateTime.Now.AddHours(8);
+            var token = new JwtSecurityToken(
+                issuer: _configuration["JWT:ValidIssuer"],
+                audience: _configuration["JWT:ValidAudience"],
+                expires: loginTime,
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+                );
 
-                var token = new JwtSecurityToken(
-                    issuer: _configuration["JWT:ValidIssuer"],
-                    audience: _configuration["JWT:ValidAudience"],
-                    expires: loginTime,
-                    claims: authClaims,
-                    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-                    );
-
-                return Ok(new
-                {
-                    token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo
-                });
-            }
-            return Unauthorized();
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                expiration = token.ValidTo,
+                userId = user.Id
+            });
         }
 
 
-        [HttpPost]
-        [Route("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        [HttpPut]
+        [Route("user/update")]
+        [Authorize()]
+        public async Task<IActionResult> Update(UpdateUserModel model)
         {
-            var userExists = await userManager.FindByNameAsync(model.Username);
-            if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+            var user = await userManager.FindByIdAsync(model.UserId);
+            user.Email = model.Email;
+            user.NormalizedEmail = model.Email.ToUpper();
 
-            ApplicationUser user = new ApplicationUser()
-            {
-                Email = model.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
-            };
-            var result = await userManager.CreateAsync(user, model.Password);
-            if (!result.Succeeded)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+            user.UserName = model.UserName;
+            user.NormalizedUserName = model.UserName.ToUpper();
 
-            return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+            await userManager.UpdateAsync(user);
+            await userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+
+            return Ok();
         }
 
     }
