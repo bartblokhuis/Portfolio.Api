@@ -13,6 +13,9 @@ namespace Portfolio.Core.AutoMapper
             CreateMap<AboutMe, AboutMeDto>();
             CreateMap<AboutMeDto, AboutMe>().ForMember(x => x.Id, options => options.Ignore());
 
+            CreateMap<EmailSettings, EmailSettingsDto>();
+            CreateMap<EmailSettingsDto, EmailSettings>().ForMember(x => x.Id, options => options.Ignore());
+
             CreateMap<Message, MessageDto>().ReverseMap();
 
             CreateMap<Project, ProjectDto>().ReverseMap();
