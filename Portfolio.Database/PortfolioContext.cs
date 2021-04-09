@@ -31,6 +31,8 @@ namespace Portfolio.Database
 
         public DbSet<SkillGroup> SkillGroups { get; set; }
 
+        public DbSet<EmailSettings> EmailSettings { get; set; }
+
         #endregion
 
         #region Methods
