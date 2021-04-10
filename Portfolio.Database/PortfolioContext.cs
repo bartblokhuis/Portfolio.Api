@@ -35,6 +35,8 @@ namespace Portfolio.Database
 
         public DbSet<SeoSettings> SeoSettings { get; set; }
 
+        public DbSet<GeneralSettings> GeneralSettings { get; set; }
+
         #endregion
 
         #region Methods
