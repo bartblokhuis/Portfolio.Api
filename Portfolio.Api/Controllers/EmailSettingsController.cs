@@ -12,7 +12,7 @@ namespace Portfolio.Controllers
     [ApiController]
     [Route("[controller]")]
     [Authorize()]
-    public class EmailSettingsController : Controller
+    public class EmailSettingsController : ControllerBase
     {
         #region Fields
 
@@ -39,6 +39,11 @@ namespace Portfolio.Controllers
         public async Task<IActionResult> Get()
         {
             var settings = await _emailSettingsService.GetEmailSettings();
+
+            //We don't want to send the password in the get method.
+            if(settings != null)
+                settings.Password = string.Empty;
+
             var dto = _mapper.Map<EmailSettingsDto>(settings);
             dto ??= new EmailSettingsDto();
 
@@ -48,14 +53,14 @@ namespace Portfolio.Controllers
         [HttpPost]
         public async Task<IActionResult> Save(EmailSettingsDto model)
         {
-            var emailSettings = _mapper.Map<EmailSettings>(model);
-
             var originalSettings = await _emailSettingsService.GetEmailSettings();
-            emailSettings.Id = (originalSettings == null) ? 0 : originalSettings.Id;
 
-            await _emailSettingsService.SaveEmailSettings(emailSettings);
+            originalSettings ??= new EmailSettings();
+            _mapper.Map(model, originalSettings);
 
-            return Ok(_mapper.Map<EmailSettingsDto>(emailSettings));
+            await _emailSettingsService.SaveEmailSettings(originalSettings);
+
+            return Ok(_mapper.Map<EmailSettingsDto>(originalSettings));
         }
 
         #endregion
