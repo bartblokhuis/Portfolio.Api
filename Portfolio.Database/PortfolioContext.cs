@@ -33,6 +33,8 @@ namespace Portfolio.Database
 
         public DbSet<EmailSettings> EmailSettings { get; set; }
 
+        public DbSet<SeoSettings> SeoSettings { get; set; }
+
         #endregion
 
         #region Methods
