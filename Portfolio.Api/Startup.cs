@@ -66,6 +66,7 @@ namespace Portfolio
             services.AddScoped(typeof(IBaseRepository<,,>), typeof(BaseRepository<,,>));
             services.AddScoped(typeof(IBaseRepository<,>), typeof(BaseRepository<,>));
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddScoped(typeof(ISettingService<>), typeof(SettingsService<>));
             services.AddSingleton<IUploadImageHelper, UploadImageHelper>();
 
             services.AddSwaggerGen(options =>
