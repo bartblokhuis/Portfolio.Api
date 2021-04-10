@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Portfolio.Domain.Models.Common;
 using System.Threading.Tasks;
 
 namespace Portfolio.Core.Interfaces.Common
 {
-    public interface ISettingService<T>
+    public interface ISettingService<T> where T : BaseEntity, ISetting
     {
         Task<T> Get();
 

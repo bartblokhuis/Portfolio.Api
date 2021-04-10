@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Portfolio.Core.Services.Common
 {
-    public class SettingsService<T> : ISettingService<T> where T: BaseEntity
+    public class SettingsService<T> : ISettingService<T> where T: BaseEntity, ISetting
     {
         #region Fields
 

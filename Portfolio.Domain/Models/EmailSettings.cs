@@ -2,7 +2,7 @@
 
 namespace Portfolio.Domain.Models
 {
-    public class EmailSettings : BaseEntity
+    public class EmailSettings : BaseEntity, ISetting
     {
         #region Properties
 

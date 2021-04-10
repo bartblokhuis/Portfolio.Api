@@ -61,7 +61,6 @@ namespace Portfolio
             services.AddScoped<ISkillGroupService, SkillGroupService>();
             services.AddScoped<ISkillService, SkillService>();
             services.AddScoped<IAboutMeService, AboutMeService>();
-            services.AddScoped<IEmailSettingsService, EmailSettingsService>();
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped(typeof(IBaseRepository<,,>), typeof(BaseRepository<,,>));
             services.AddScoped(typeof(IBaseRepository<,>), typeof(BaseRepository<,>));

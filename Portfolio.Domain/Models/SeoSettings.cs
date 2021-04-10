@@ -2,7 +2,7 @@
 
 namespace Portfolio.Domain.Models
 {
-    public class SeoSettings : BaseEntity
+    public class SeoSettings : BaseEntity, ISetting
     {
         public string Title { get; set; }
 
