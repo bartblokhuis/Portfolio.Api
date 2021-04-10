@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Portfolio.Database;
 
 namespace Portfolio.Migrations.Migrations
 {
     [DbContext(typeof(PortfolioContext))]
-    partial class PortfolioContextModelSnapshot : ModelSnapshot
+    [Migration("20210410140128_general_settings_init")]
+    partial class general_settings_init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -74,48 +76,6 @@ namespace Portfolio.Migrations.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("EmailSettings");
-                });
-
-            modelBuilder.Entity("Portfolio.Domain.Models.GeneralSettings", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<string>("CallToActionText")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FooterText")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("FooterTextBetweenCopyRightAndYear")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("GithubUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LandingDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LandingTitle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LinkedInUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("ShowContactMeForm")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("ShowCopyRightInFooter")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("StackOverFlowUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("GeneralSettings");
                 });
 
             modelBuilder.Entity("Portfolio.Domain.Models.Message", b =>
