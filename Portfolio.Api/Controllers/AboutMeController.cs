@@ -35,20 +35,23 @@ namespace Portfolio.Controllers
         #region Methods
 
         [HttpGet]
-        public async Task<AboutMeDto> Get()
+        public async Task<IActionResult> Get()
         {
             var aboutMe = await _aboutMeService.GetAboutMe();
-            return _mapper.Map<AboutMeDto>(aboutMe);
+            if (aboutMe == null)
+                aboutMe = new AboutMe();
+
+            return Ok(_mapper.Map<AboutMeDto>(aboutMe));
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<AboutMeDto> Save(AboutMeDto model)
+        public async Task<IActionResult> Save(AboutMeDto model)
         {
             var aboutMe = _mapper.Map<AboutMe>(model);
             await _aboutMeService.SaveAboutMe(aboutMe);
 
-            return _mapper.Map<AboutMeDto>(aboutMe);
+            return Ok(_mapper.Map<AboutMeDto>(aboutMe));
         }
 
         #endregion

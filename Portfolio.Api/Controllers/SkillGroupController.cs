@@ -41,18 +41,17 @@ namespace Portfolio.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IEnumerable<SkillGroupDto>> Get()
+        public async Task<IActionResult> Get()
         {
             var skillGroups = await _skillGroupService.GetAll();
             foreach (var skill in skillGroups.SelectMany(x => x.Skills))
-            {
                 skill.SkillGroup = null;
-            }
-            return _mapper.Map<IEnumerable<SkillGroupDto>>(skillGroups);
+
+            return Ok(_mapper.Map<IEnumerable<SkillGroupDto>>(skillGroups));
         }
  
         [HttpPost]
-        public async Task<SkillGroupDto> Create(CreateUpdateSkillGroupDto model)
+        public async Task<IActionResult> Create(CreateUpdateSkillGroupDto model)
         {
             if (!ModelState.IsValid)
                 throw new Exception("Invalid model");
@@ -63,11 +62,11 @@ namespace Portfolio.Controllers
             var skillGroup = _mapper.Map<SkillGroup>(model);
             await _skillGroupService.Insert(skillGroup);
 
-            return _mapper.Map<SkillGroupDto>(skillGroup);
+            return Ok(_mapper.Map<SkillGroupDto>(skillGroup));
         }
 
         [HttpPut]
-        public async Task<SkillGroupDto> Update(CreateUpdateSkillGroupDto model)
+        public async Task<IActionResult> Update(CreateUpdateSkillGroupDto model)
         {
             if (!ModelState.IsValid)
                 throw new Exception("Invalid model");
@@ -81,7 +80,7 @@ namespace Portfolio.Controllers
             var skillGroup = _mapper.Map<SkillGroup>(model);
             await _skillGroupService.Update(skillGroup);
 
-            return _mapper.Map<SkillGroupDto>(skillGroup);
+            return Ok(_mapper.Map<SkillGroupDto>(skillGroup));
         }
         
         [HttpDelete]

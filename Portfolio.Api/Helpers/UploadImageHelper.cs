@@ -13,7 +13,7 @@ namespace Portfolio.Helpers
         #region Fields
 
         private readonly IWebHostEnvironment _hostingEnvironment;
-        private static string[] AllowedExtensions = new string[] { ".svg", "jpg", "jpeg", "png" };
+        private static string[] AllowedExtensions = new string[] { ".svg", ".jpg", ".jpeg", ".png" };
 
         #endregion
 
@@ -41,7 +41,6 @@ namespace Portfolio.Helpers
 
         public async Task<string> UploadImage(IFormFile image)
         {
-            var imageName = Path.GetFileNameWithoutExtension(image.FileName);
             var fileExtension = Path.GetExtension(image.FileName);
             var uniqueFileName = Path.GetRandomFileName() + fileExtension;
 

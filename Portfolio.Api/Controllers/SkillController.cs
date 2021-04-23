@@ -45,22 +45,22 @@ namespace Portfolio.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IEnumerable<SkillDto>> Get()
+        public async Task<IActionResult> Get()
         {
             var skills = await _skillService.GetAll();
-            return _mapper.Map<IEnumerable<SkillDto>>(skills);
+            return Ok(_mapper.Map<IEnumerable<SkillDto>>(skills));
         }
 
         [AllowAnonymous]
         [HttpGet("GetBySkillGroupId/{skillGroupId}")]
-        public async Task<IEnumerable<SkillDto>> GetBySkillGroupId(int skillGroupId)
+        public async Task<IActionResult> GetBySkillGroupId(int skillGroupId)
         {
             var skills = await _skillService.GetBySkillGroupId(skillGroupId);
-            return _mapper.Map<IEnumerable<SkillDto>>(skills);
+            return Ok(_mapper.Map<IEnumerable<SkillDto>>(skills));
         }
 
         [HttpPost]
-        public async Task<SkillDto> Create(CreateUpdateSkill model)
+        public async Task<IActionResult> Create(CreateUpdateSkill model)
         {
             model.Id = 0;
 
@@ -76,11 +76,11 @@ namespace Portfolio.Controllers
             var skill = _mapper.Map<Skill>(model);
             await _skillService.Insert(skill);
 
-            return _mapper.Map<SkillDto>(skill);
+            return Ok(_mapper.Map<SkillDto>(skill));
         }
 
         [HttpPut("SaveSkillImage/{skillId}")]
-        public async Task<SkillDto> SaveSkillImage(int skillId, IFormFile icon)
+        public async Task<IActionResult> SaveSkillImage(int skillId, IFormFile icon)
         {
             var skill = await _skillService.GetById(skillId);
             if (skill == null)
@@ -92,11 +92,11 @@ namespace Portfolio.Controllers
 
             skill.IconPath = await _uploadImageHelper.UploadImage(icon);
             await _skillService.Update(skill);
-            return _mapper.Map<SkillDto>(skill);
+            return Ok(_mapper.Map<SkillDto>(skill));
         }
 
         [HttpPut]
-        public async Task<SkillDto> Update(CreateUpdateSkill model)
+        public async Task<IActionResult> Update(CreateUpdateSkill model)
         {
             if (!ModelState.IsValid)
                 throw new Exception("Invalid model"); //TODO Better excaption handling
@@ -116,7 +116,7 @@ namespace Portfolio.Controllers
             _mapper.Map(model, skill);
             await _skillService.Update(skill);
 
-            return _mapper.Map<SkillDto>(skill);
+            return Ok(_mapper.Map<SkillDto>(skill));
         }
 
         [HttpDelete]

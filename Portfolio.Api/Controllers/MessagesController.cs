@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +8,6 @@ using Portfolio.Core.Interfaces;
 using Portfolio.Core.Interfaces.Common;
 using Portfolio.Domain.Dtos;
 using Portfolio.Domain.Dtos.Messages;
-using Portfolio.Domain.Enums;
 using Portfolio.Domain.Models;
 
 namespace Portfolio.Controllers
@@ -43,39 +41,38 @@ namespace Portfolio.Controllers
         #region Methods
 
         [HttpGet]
-        public async Task<IEnumerable<MessageDto>> Get()
+        public async Task<IActionResult> Get()
         {
             var messages = await _messageService.Get();
-            return _mapper.Map<IEnumerable<MessageDto>>(messages);
+            var result = _mapper.Map<IEnumerable<MessageDto>>(messages);
+
+            return Ok(result);
         }
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<MessageDto> Create(MessageDto messageDto)
+        public async Task<IActionResult> Create(MessageDto messageDto)
         {
             var ipAddress = _webHelper.GetCurrentIpAddress();
 
             if (!await _messageService.IsAllowed(ipAddress))
-            {
-                //TODO Give proper response
-                throw new Exception("Please wait 2 minutes between requests");
-            }
+                return BadRequest("Please wait 2 minuted between requests");
 
             var message = _mapper.Map<Message>(messageDto);
             await _messageService.Create(message);
 
-            return _mapper.Map<MessageDto>(message);
+            return Ok(_mapper.Map<MessageDto>(message));
         }
 
         [HttpPut]
-        public async Task<MessageDto> UpdateMessageStatus(UpdateMessageStatusDto model)
+        public async Task<IActionResult> UpdateMessageStatus(UpdateMessageStatusDto model)
         {
             var message = await _messageService.GetById(model.Id);
             if (message == null)
-                throw new Exception("Message not found");
+                return BadRequest("Message not found");
 
             await _messageService.UpdateMessageStatus(message, model.MessageStatus);
-            return _mapper.Map<MessageDto>(message);
+            return Ok(_mapper.Map<MessageDto>(message));
         }
 
         [HttpDelete]
@@ -88,8 +85,6 @@ namespace Portfolio.Controllers
             await _messageService.Delete(message);
             return Ok();
         }
-
-        
 
         #endregion
     }

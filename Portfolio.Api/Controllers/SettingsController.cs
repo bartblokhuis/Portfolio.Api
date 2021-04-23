@@ -102,6 +102,7 @@ namespace Portfolio.Controllers
         #region SeoSettings
 
         [HttpGet("SeoSettings")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetSeoSettings()
         {
             var settings = await _seoSettings.Get();
