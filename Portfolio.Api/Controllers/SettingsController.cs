@@ -42,6 +42,7 @@ namespace Portfolio.Controllers
         #region GeneralSettings
 
         [HttpGet("GeneralSettings")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetGeneralSettings()
         {
             var settings = await _generalSettings.Get();
